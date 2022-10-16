@@ -1,13 +1,23 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserInfo } from './interfaces/user-info.interface';
+import { UserInfo } from './models/userInfo.model';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id/info')
-  someData(@Param('id', ParseIntPipe) userId: number): UserInfo {
-    return this.userService.getUserInfoById(userId);
+  async getUserInfo(
+    @Param('id', ParseIntPipe) userId: number,
+  ): Promise<UserInfo | null> {
+    const userInfo = await this.userService.getUserInfoById(userId);
+    if (!userInfo) throw new NotFoundException('User Not Found');
+    return userInfo;
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserInfo } from './interfaces/user-info.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
+import { UserInfo } from './models/userInfo.model';
 
 @Injectable()
 export class UserService {
@@ -14,11 +14,10 @@ export class UserService {
     return this.usersRepository.findOneBy({ username });
   }
 
-  getUserInfoById(userId: number): UserInfo {
-    return {
-      firstName: 'John',
-      lastName: 'Doe',
-      userId: userId,
-    };
+  async getUserInfoById(userId: number): Promise<UserInfo | null> {
+    const user = await this.usersRepository.findOneBy({ userId });
+    if (user) {
+      return new UserInfo(user);
+    } else return null;
   }
 }
