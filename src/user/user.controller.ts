@@ -6,18 +6,18 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserInfo } from './models/userInfo.model';
+import { Profile } from './profile.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id/info')
+  @Get(':id/profile')
   async getUserInfo(
     @Param('id', ParseIntPipe) userId: number,
-  ): Promise<UserInfo | null> {
-    const userInfo = await this.userService.getUserInfoById(userId);
-    if (!userInfo) throw new NotFoundException('User Not Found');
-    return userInfo;
+  ): Promise<Profile | null> {
+    const profile = await this.userService.getProfileByUserId(userId);
+    if (!profile) throw new NotFoundException('Profile Not Found');
+    return profile;
   }
 }

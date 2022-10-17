@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { UserInfo } from './models/userInfo.model';
+import { Profile } from './profile.entity';
 
 @Injectable()
 export class UserService {
@@ -14,10 +14,13 @@ export class UserService {
     return this.usersRepository.findOneBy({ username });
   }
 
-  async getUserInfoById(userId: number): Promise<UserInfo | null> {
-    const user = await this.usersRepository.findOneBy({ userId });
-    if (user) {
-      return new UserInfo(user);
+  async getProfileByUserId(userId: number): Promise<Profile | null> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['profile'],
+    });
+    if (user && user.profile) {
+      return user.profile;
     } else return null;
   }
 }
