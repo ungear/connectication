@@ -10,16 +10,15 @@ export class PostService {
     @InjectRepository(Post) private postRepository: Repository<Post>,
   ) {}
 
-  createPost(createPostDto: CreatePostDto) {
+  createPost(createPostDto: CreatePostDto): Promise<Post> {
     const post = new Post();
     post.text = createPostDto.text;
     post.userId = createPostDto.userId;
-    this.postRepository.save(post);
+    return this.postRepository.save(post);
   }
 
   async getUserPosts(userId: number): Promise<Post[]> {
-    const posts = await this.postRepository.findBy({ userId: userId });
-    return posts;
+    return await this.postRepository.findBy({ userId: userId });
   }
 
   deletePost(postId: number) {

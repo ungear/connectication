@@ -1,9 +1,9 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -21,9 +21,12 @@ export class PostController {
   }
 
   @Post()
-  @HttpCode(204)
   async createPost(@Body() createPostDto: CreatePostDto) {
-    this.postService.createPost(createPostDto);
+    try {
+      return await this.postService.createPost(createPostDto);
+    } catch (error) {
+      throw new BadRequestException('Failed to create a post');
+    }
   }
 
   @Delete(':postId')
