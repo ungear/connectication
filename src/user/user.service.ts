@@ -38,4 +38,8 @@ export class UserService {
       return user.profile;
     } else return null;
   }
+
+  async getAllUsersProfile(): Promise<Profile[] | null> {
+    return await this.profileRepository.find();
+  }
 }

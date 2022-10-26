@@ -16,6 +16,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get('/all-profiles')
+  async getAllUsersInfo(): Promise<Profile[] | null> {
+    return await this.userService.getAllUsersProfile();
+  }
+
   @Get(':id/profile')
   async getUserInfo(
     @Param('id', ParseIntPipe) userId: number,
