@@ -11,10 +11,14 @@ import {
 import { UserService } from './user.service';
 import { Profile } from './profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('/all-profiles')
   async getAllUsersInfo(): Promise<Profile[] | null> {
@@ -33,7 +37,9 @@ export class UserController {
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      return await this.userService.createUser(createUserDto);
+      const user = await this.userService.createUser(createUserDto);
+      const securityData = await this.authService.login(user);
+      return { ...user, ...securityData };
     } catch (error) {
       throw new BadRequestException('Failed to create a user');
     }
