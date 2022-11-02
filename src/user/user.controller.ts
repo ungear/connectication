@@ -7,11 +7,15 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Profile } from './profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from '../auth/auth.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthenticatedUserInReq } from '../auth/types/authenticatedUserInReq.interface';
 
 @Controller('user')
 export class UserController {
@@ -34,11 +38,27 @@ export class UserController {
     return profile;
   }
 
+  // Get user info by provided JWT
+  @UseGuards(JwtAuthGuard)
+  @Get('current')
+  async getCurrentUserInfo(
+    @Request() req,
+  ): Promise<{ userId: number; profile: Profile }> {
+    const authenticatedUserSummary: AuthenticatedUserInReq = req.user;
+    const profile = await this.userService.getProfileByUserId(
+      authenticatedUserSummary.userId,
+    );
+    return {
+      userId: authenticatedUserSummary.userId,
+      profile,
+    };
+  }
+
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const user = await this.userService.createUser(createUserDto);
-      const securityData = await this.authService.login(user);
+      const securityData = await this.authService.getJwt(user.id);
       return { ...user, ...securityData };
     } catch (error) {
       throw new BadRequestException('Failed to create a user');
