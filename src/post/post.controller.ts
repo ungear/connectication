@@ -7,9 +7,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('post')
 export class PostController {
@@ -20,10 +23,14 @@ export class PostController {
     return this.postService.getUserPosts(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async createPost(@Body() createPostDto: CreatePostDto) {
+  async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
     try {
-      return await this.postService.createPost(createPostDto);
+      return await this.postService.createPost(
+        req.user.userId,
+        createPostDto.text,
+      );
     } catch (error) {
       throw new BadRequestException('Failed to create a post');
     }
