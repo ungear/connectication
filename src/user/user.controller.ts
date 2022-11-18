@@ -16,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthenticatedUserInReq } from '../auth/types/authenticatedUserInReq.interface';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
@@ -24,9 +25,11 @@ export class UserController {
     private readonly authService: AuthService,
   ) {}
 
-  @Get('/all-profiles')
-  async getAllUsersInfo(): Promise<Profile[] | null> {
-    return await this.userService.getAllUsersProfile();
+  @Get('/all')
+  async getAllUsersInfo(): Promise<User[] | null> {
+    const users = await this.userService.getAllUsers();
+    // TODO find a better way to remove passwords from responses. Consider https://stackoverflow.com/a/59140504
+    return users.map((x) => ({ ...x, password: null }));
   }
 
   @Get(':id/profile')

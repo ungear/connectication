@@ -39,7 +39,9 @@ export class UserService {
     } else return null;
   }
 
-  async getAllUsersProfile(): Promise<Profile[] | null> {
-    return await this.profileRepository.find();
+  async getAllUsers(): Promise<User[] | null> {
+    return await this.usersRepository.find({
+      relations: ['profile'],
+    });
   }
 }
