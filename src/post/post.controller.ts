@@ -36,6 +36,7 @@ export class PostController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':postId')
   async deletePost(@Param('postId', ParseIntPipe) postId: number) {
     this.postService.deletePost(postId);

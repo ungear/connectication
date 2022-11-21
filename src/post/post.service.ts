@@ -20,7 +20,7 @@ export class PostService {
     return await this.postRepository.findBy({ userId: userId });
   }
 
-  deletePost(postId: number) {
-    console.log('removing post ' + postId);
+  async deletePost(postId: number) {
+    return await this.postRepository.delete(postId);
   }
 }
