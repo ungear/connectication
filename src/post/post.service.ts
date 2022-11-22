@@ -17,7 +17,10 @@ export class PostService {
   }
 
   async getUserPosts(userId: number): Promise<Post[]> {
-    return await this.postRepository.findBy({ userId: userId });
+    return await this.postRepository.find({
+      where: { userId: userId },
+      order: { createdDate: 'DESC' },
+    });
   }
 
   async deletePost(postId: number) {
