@@ -19,7 +19,7 @@ export class AuthService {
   }
 
   // Composes JWT payload and returns token
-  getJwt(userId: number): any {
+  getJwt(userId: number): { access_token: string } {
     const payload = {
       sub: userId,
     };

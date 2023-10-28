@@ -17,6 +17,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AuthenticatedUserInReq } from '../auth/types/authenticatedUserInReq.interface';
 import { User } from './user.entity';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('user')
 export class UserController {
@@ -58,6 +59,7 @@ export class UserController {
   }
 
   @Post()
+  @ApiOkResponse({ type: User })
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const user = await this.userService.createUser(createUserDto);
