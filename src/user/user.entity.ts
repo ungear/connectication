@@ -18,6 +18,12 @@ export class User {
   password: string;
 
   @Column()
+  salt: string;
+
+  @Column()
+  hash: string;
+
+  @Column()
   username: string;
 
   @OneToOne(() => Profile)

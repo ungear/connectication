@@ -4,12 +4,14 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from './profile.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { PasswordService } from 'src/auth/password.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
     @InjectRepository(Profile) private profileRepository: Repository<Profile>,
+    private passwordService: PasswordService,
   ) {}
 
   async findByLogin(username: string): Promise<User | undefined> {
@@ -25,6 +27,8 @@ export class UserService {
     user.username = createUserDto.username;
     user.password = createUserDto.password;
     user.profile = profile;
+    user.salt = this.passwordService.getSalt();
+    user.hash = this.passwordService.getHash(createUserDto.password, user.salt);
     await this.usersRepository.save(user);
     return user;
   }
